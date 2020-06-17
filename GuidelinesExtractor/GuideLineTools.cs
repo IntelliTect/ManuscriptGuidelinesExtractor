@@ -53,7 +53,8 @@ namespace GuidelinesExtractor
                     //will just be one Table which is the table that the Guideline is in. 
                     foreach (Word.Table guidelineTable in rng.Tables)
                     {
-                        GetGuidelineFromTable(ref guidelines, guidelineTable);
+                        GuidelineBookmarking(ref guidelines, guidelineTable);
+                       // GetGuidelineFromTable(ref guidelines, guidelineTable);
                     }
 
                     rng.Find.Execute();
@@ -98,7 +99,7 @@ namespace GuidelinesExtractor
                 if (text.Contains("Guidelines"))
                 {
                     guidelines.Add(text);
-                    //TranslateWordStylingToMarkDown(cell.Range);
+                  
 
                 }
                 // text now contains the content of the cell.
@@ -106,9 +107,56 @@ namespace GuidelinesExtractor
 
         }
 
-        private static string TranslateWordStylingToMarkDown(Range range)
+
+        public static void GuidelineBookmarking(ref List<string> guidelines, Word.Table table)
         {
-            throw new NotImplementedException();
+            Word.Range individualGuidelineRange;
+            for (int row = 1; row <= table.Rows.Count; row++)
+            {
+                var cell = table.Cell(row, 1);
+                var text = cell.Range.Text;
+                if (text.Contains("Guidelines"))
+                {
+
+                    individualGuidelineRange = cell.Range;
+
+                    BookmarkGuidelinesInTable(cell.Range, ref guidelines);
+
+
+                    guidelines.Add(text);
+
+
+                }
+                // text now contains the content of the cell.
+            }
+
+        }
+
+        private static void BookmarkGuidelinesInTable(Range tableRange, ref List<string> guidelines)
+        {
+            Word.Range individualGuidelineRange = tableRange;
+
+            individualGuidelineRange.Find.ClearFormatting();
+            individualGuidelineRange.Find.Text = "^p";
+
+            Word.Range startingRange = individualGuidelineRange; // 
+            individualGuidelineRange.Find.Execute();
+
+            Range guidelineEndingWithParagraphRange= tableRange;
+            while (individualGuidelineRange.Find.Found)
+            {
+                guidelineEndingWithParagraphRange.Start = startingRange.Start; //from the start of text
+                guidelineEndingWithParagraphRange.End = individualGuidelineRange.Start; // to the first paragraph mark
+
+                startingRange = individualGuidelineRange; //we can then check if no paragraph was find we can just get all thext from the start to the end.
+                individualGuidelineRange.Find.Execute();
+
+            }
+
+            guidelines.Add(startingRange.Text); //bookmark this
+
+
+
         }
     }
 }

@@ -9,9 +9,20 @@ namespace GuidelineExtractorTests
         [TestMethod]
         public void TestMethod1()
         {
-            string folder = @"C:\Users\saffron\source\repos\GuidelinesExtractor\GuidelinesExtractor\Quick Test Files";
+            string folder = @"C:\Users\saffron\source\repos\GuidelinesExtractor\GuidelineExtractorTests\Quick Test Files";
 
             GuidelinesExtractor.GuidelinesFormatter.AllGuidelinesToMarkDown(folder, verbose: true);
+
+        }
+
+
+
+        [TestMethod]
+        public void GetUniqueGuidelinesInTable()
+        {
+            string doc = @"C:\Users\saffron\source\repos\GuidelinesExtractor\GuidelineExtractorTests\Quick Test Files";
+
+            GuidelinesExtractor.GuideLineTools.GetGuideLinesInDocument(doc);
 
         }
     }
