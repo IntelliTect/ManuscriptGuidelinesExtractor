@@ -92,7 +92,7 @@ namespace GuidelinesExtractor
             {
                 case Modes.GetAllGuidelines:
                     Console.WriteLine($"Getting all Guidelines from the documents found in: {path}");
-                    GuidelinesFormatter.AllGuidelinesToMarkDown(path, verbose);
+                   // GuidelinesFormatter.AllGuidelinesToMarkDown(path, verbose);
                     break;
               /*  case Modes.TestGeneration:
                     var generatedTests

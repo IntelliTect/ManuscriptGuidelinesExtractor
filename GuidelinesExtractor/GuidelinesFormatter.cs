@@ -9,7 +9,7 @@ namespace GuidelinesExtractor
     public class GuidelinesFormatter
     {
 
-        public static void AllGuidelinesToMarkDown(string pathToChapterDocumentFolder, bool verbose)
+        public static void AllGuidelinesToMarkDown(string pathToChapterDocumentFolder, bool verbose, string guidelineTitleStyle)
         {
 
             List<string> allDocs = FileManager.GetAllFilesAtPath(pathToChapterDocumentFolder, searchPattern: "Michaelis_Ch??.docx")
@@ -25,7 +25,7 @@ namespace GuidelinesExtractor
             int chapterNumber = 0;
             foreach (string chapterDocxPath in allDocs)
             {
-                List<string> currentChapterGuidelines = GuideLineTools.GetGuideLinesInDocument(chapterDocxPath);
+                List<string> currentChapterGuidelines = GuideLineTools.GetGuideLinesInDocument(chapterDocxPath, guidelineTitleStyle);
 
                 if (currentChapterGuidelines.Count > 0)
                 {

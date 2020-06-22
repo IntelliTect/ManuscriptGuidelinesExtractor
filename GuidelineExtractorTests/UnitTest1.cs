@@ -11,7 +11,7 @@ namespace GuidelineExtractorTests
         {
             string folder = @"C:\Users\saffron\source\repos\GuidelinesExtractor\GuidelineExtractorTests\Quick Test Files";
 
-            GuidelinesExtractor.GuidelinesFormatter.AllGuidelinesToMarkDown(folder, verbose: true);
+            GuidelinesExtractor.GuidelinesFormatter.AllGuidelinesToMarkDown(folder, verbose: true, guidelineTitleStyle: "SF2_TTL");
 
         }
 
@@ -20,9 +20,9 @@ namespace GuidelineExtractorTests
         [TestMethod]
         public void GetUniqueGuidelinesInTable()
         {
-            string doc = @"C:\Users\saffron\source\repos\GuidelinesExtractor\GuidelineExtractorTests\Quick Test Files";
+            string doc = @"C:\Users\saffron\source\repos\GuidelinesExtractor\Michaelis_Ch12.docx";
 
-            GuidelinesExtractor.GuideLineTools.GetGuideLinesInDocument(doc);
+            GuidelinesExtractor.GuideLineTools.GetGuideLinesInDocument(doc , guidelineTitleStyle: "SF2_TTL");
 
         }
     }

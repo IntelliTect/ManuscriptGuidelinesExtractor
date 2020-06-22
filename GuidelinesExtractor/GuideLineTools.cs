@@ -29,21 +29,20 @@ namespace GuidelinesExtractor
 
 
 
-        public static List<string> GetGuideLinesInDocument(string chapterWordFilePath)
+        public static List<string> GetGuideLinesInDocument(string chapterWordFilePath, string guidelineTitleStyle)
         {
             OpenDocument(chapterWordFilePath);
 
-            object guideLineStyle = GetDocumentGuideLineStyle(); //chapters are inconsistent with styling and fonts
+            //object guideLineStyle = GetDocumentGuideLineStyle(); //chapters are inconsistent with styling and fonts
 
             List<string> guidelines = new List<string>();
-            if (guideLineStyle != null) //atleast one guideline was found
-            {
+           
 
                 Word.Range rng = _WordApp.ActiveDocument.Content;
 
                 rng.Find.ClearFormatting();
                 rng.Find.Text = "Guidelines";
-                rng.Find.set_Style(guideLineStyle);
+                rng.Find.set_Style(guidelineTitleStyle);
 
                 rng.Find.Execute();
 
@@ -60,10 +59,10 @@ namespace GuidelinesExtractor
                     rng.Find.Execute();
 
                 }
-            }
+            
 
            
-            _WordApp.Documents.Close(SaveChanges: Word.WdSaveOptions.wdDoNotSaveChanges);
+           // _WordApp.Documents.Close(SaveChanges: Word.WdSaveOptions.wdDoNotSaveChanges);
             return guidelines;
 
         }
@@ -123,7 +122,7 @@ namespace GuidelinesExtractor
                     BookmarkGuidelinesInTable(cell.Range, ref guidelines);
 
 
-                    guidelines.Add(text);
+                    //guidelines.Add(text);
 
 
                 }
@@ -136,24 +135,50 @@ namespace GuidelinesExtractor
         {
             Word.Range individualGuidelineRange = tableRange;
 
+            List<string> bookmarkGuids = new List<string>();
+            string guidAsString;
+
             individualGuidelineRange.Find.ClearFormatting();
             individualGuidelineRange.Find.Text = "^p";
 
-            Word.Range startingRange = individualGuidelineRange; // 
+            // 
+            object start = individualGuidelineRange.Start;
+            object end = individualGuidelineRange.End;
+            Word.Range startingRange = _ChapterWordDoc.Range(start, end);
             individualGuidelineRange.Find.Execute();
 
-            Range guidelineEndingWithParagraphRange= tableRange;
+            Range guidelineEndingWithParagraphRange = _ChapterWordDoc.Range(start, end);
             while (individualGuidelineRange.Find.Found)
             {
+                if (individualGuidelineRange.Start >= (int)end) //no longer in table text
+                {
+                    break;
+                }
                 guidelineEndingWithParagraphRange.Start = startingRange.Start; //from the start of text
                 guidelineEndingWithParagraphRange.End = individualGuidelineRange.Start; // to the first paragraph mark
 
-                startingRange = individualGuidelineRange; //we can then check if no paragraph was find we can just get all thext from the start to the end.
+                if (!guidelineEndingWithParagraphRange.Text.StartsWith("Guideline"))//skip the first line ending with a paragraph mark
+                {
+                    guidAsString = Guid.NewGuid().ToString("N");
+                    guidelines.Add(guidelineEndingWithParagraphRange.Text); //bookmark this range
+                    
+                    Range guidelineTextRangeWithNoParagraphCharacters = _ChapterWordDoc.Range(guidelineEndingWithParagraphRange.Start + 1, guidelineEndingWithParagraphRange.End); //increment the start to ignore the paragraph special character
+                    
+                    bookmarkGuids.Add(_ChapterWordDoc.Bookmarks.Add(($"a{guidAsString}").Substring(0, 12), guidelineEndingWithParagraphRange).Name);
+                }
+
+                startingRange.Start = individualGuidelineRange.Start;
+
+
                 individualGuidelineRange.Find.Execute();
 
             }
+            guidAsString = Guid.NewGuid().ToString("N");
+            startingRange.End = (int)(end)-1; //we can then check if no paragraph was found we can just get all the text from the startRange.Start to the original end of the table.
+            startingRange.Start = startingRange.Start + 1;
+            guidelines.Add(startingRange.Text); //bookmark this range
+            _ChapterWordDoc.Bookmarks.Add(($"a{guidAsString}").Substring(0,12), startingRange);
 
-            guidelines.Add(startingRange.Text); //bookmark this
 
 
 
