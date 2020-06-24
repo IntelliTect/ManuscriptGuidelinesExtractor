@@ -9,9 +9,9 @@ namespace GuidelineExtractorTests
         [TestMethod]
         public void TestMethod1()
         {
-            string folder = @"C:\Users\saffron\source\repos\GuidelinesExtractor\GuidelineExtractorTests\Quick Test Files";
+            string folder = @"C:\Users\saffron\source\repos\GuidelinesExtractor\GuidelineExtractorTests\BookmarkFiles\EssentialCSharpManuscript";
 
-            GuidelinesExtractor.GuidelinesFormatter.AllGuidelinesToMarkDown(folder, verbose: true, guidelineTitleStyle: "SF2_TTL");
+            GuidelinesExtractor.GuidelinesFormatter.AllGuidelinesToCSVWithBookmarks(folder, verbose: true, guidelineTitleStyle: "SF2_TTL");
 
         }
 
@@ -22,7 +22,7 @@ namespace GuidelineExtractorTests
         {
             string doc = @"C:\Users\saffron\source\repos\GuidelinesExtractor\Michaelis_Ch12.docx";
 
-            GuidelinesExtractor.GuideLineTools.GetGuideLinesInDocument(doc , guidelineTitleStyle: "SF2_TTL");
+           // GuidelinesExtractor.GuideLineTools.GetGuideLinesInDocument(doc , guidelineTitleStyle: "SF2_TTL");
 
         }
     }

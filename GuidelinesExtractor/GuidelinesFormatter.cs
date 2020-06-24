@@ -9,7 +9,70 @@ namespace GuidelinesExtractor
     public class GuidelinesFormatter
     {
 
-        public static void AllGuidelinesToMarkDown(string pathToChapterDocumentFolder, bool verbose, string guidelineTitleStyle)
+        /*        public static void AllGuidelinesToMarkDown(string pathToChapterDocumentFolder, bool verbose, string guidelineTitleStyle)
+                {
+
+                    List<string> allDocs = FileManager.GetAllFilesAtPath(pathToChapterDocumentFolder, searchPattern: "Michaelis_Ch??.docx")
+                        .OrderBy(x => x).ToList();
+
+                    List<string> AllGuidelines = new List<string>();
+
+                    StreamWriter markdownFileWriter = File.CreateText(pathToChapterDocumentFolder + @"/Guidelines.md");
+
+                    string h3 = "###";
+                    string h1 = "#";
+
+                    int chapterNumber = 0;
+                    foreach (string chapterDocxPath in allDocs)
+                    {
+                        List<string> currentChapterGuidelines = GuideLineTools.GetGuideLinesInDocument(chapterDocxPath, guidelineTitleStyle);
+
+                        if (currentChapterGuidelines.Count > 0)
+                        {
+                            chapterNumber = GetChapterNumber(chapterDocxPath);
+                            markdownFileWriter.WriteLine($"{h1} Chapter {chapterNumber}");
+
+
+                            char[] splitChars = { '\r' };
+
+                            foreach (string guideline in currentChapterGuidelines)
+                            {
+                                string[] guidelineParts = guideline.Split(splitChars);
+
+                                markdownFileWriter.WriteLine($"{h3} {guidelineParts[0]}"); // "Guidelines"
+
+                                for (int i = 1; i < guidelineParts.Length; i++)
+                                {
+                                    if (guidelineParts[i].Length > 2) //ignore words \a (not sure if all guidelines have this format so just using a length check )
+                                    markdownFileWriter.WriteLine("- " + guidelineParts[i]);
+                                }
+
+                            }
+
+
+                            if (verbose)
+                            {
+                                //print all guidelines
+                                Console.WriteLine($"Chapter {chapterNumber}");
+                                foreach (string guideline in currentChapterGuidelines)
+                                {
+                                    Console.WriteLine(guideline);
+                                }
+                            }
+                        }
+
+                    }
+
+
+                    markdownFileWriter.Close();
+                    GuideLineTools._WordApp.Quit();
+
+                }
+                */
+
+
+
+        public static void AllGuidelinesToCSVWithBookmarks(string pathToChapterDocumentFolder, bool verbose, string guidelineTitleStyle)
         {
 
             List<string> allDocs = FileManager.GetAllFilesAtPath(pathToChapterDocumentFolder, searchPattern: "Michaelis_Ch??.docx")
@@ -17,54 +80,31 @@ namespace GuidelinesExtractor
 
             List<string> AllGuidelines = new List<string>();
 
-            StreamWriter markdownFileWriter = File.CreateText(pathToChapterDocumentFolder + @"/Guidelines.md");
+            StreamWriter csvFileWriter = File.CreateText(pathToChapterDocumentFolder + @"/Guidelines.csv");
 
             string h3 = "###";
             string h1 = "#";
 
             int chapterNumber = 0;
+            List<(string, string)> currentChapterGuidelines;
+
+            //before your loop
+            var csv = new System.Text.StringBuilder();
+
+
             foreach (string chapterDocxPath in allDocs)
             {
-                List<string> currentChapterGuidelines = GuideLineTools.GetGuideLinesInDocument(chapterDocxPath, guidelineTitleStyle);
+               chapterNumber = GetChapterNumber(chapterDocxPath);
+               currentChapterGuidelines= (GuideLineTools.GetGuideLinesInDocument(chapterDocxPath, chapterNumber, guidelineTitleStyle));
 
-                if (currentChapterGuidelines.Count > 0)
-                {
-                    chapterNumber = GetChapterNumber(chapterDocxPath);
-                    markdownFileWriter.WriteLine($"{h1} Chapter {chapterNumber}");
-
-
-                    char[] splitChars = { '\r' };
-
-                    foreach (string guideline in currentChapterGuidelines)
-                    {
-                        string[] guidelineParts = guideline.Split(splitChars);
-
-                        markdownFileWriter.WriteLine($"{h3} {guidelineParts[0]}"); // "Guidelines"
-
-                        for (int i = 1; i < guidelineParts.Length; i++)
-                        {
-                            if (guidelineParts[i].Length > 2) //ignore words \a (not sure if all guidelines have this format so just using a length check )
-                            markdownFileWriter.WriteLine("- " + guidelineParts[i]);
-                        }
-
-                    }
-
-
-                    if (verbose)
-                    {
-                        //print all guidelines
-                        Console.WriteLine($"Chapter {chapterNumber}");
-                        foreach (string guideline in currentChapterGuidelines)
-                        {
-                            Console.WriteLine(guideline);
-                        }
-                    }
+                foreach ((string, string) bookmarkAndGuideline in currentChapterGuidelines) {
+                    csvFileWriter.WriteLine($"{bookmarkAndGuideline.Item1},\"{bookmarkAndGuideline.Item2}\"");
                 }
 
             }
 
-
-            markdownFileWriter.Close();
+           
+            csvFileWriter.Close();
             GuideLineTools._WordApp.Quit();
 
         }
