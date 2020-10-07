@@ -91,7 +91,7 @@ namespace GuidelinesExtractor
             //before your loop
             var csv = new System.Text.StringBuilder();
 
-
+            
             foreach (string chapterDocxPath in allDocs)
             {
                chapterNumber = GetChapterNumber(chapterDocxPath);
@@ -109,6 +109,61 @@ namespace GuidelinesExtractor
 
         }
 
+
+
+
+        public static void AllGuidelinesToXMLWithBookmarks(string pathToChapterDocumentFolder, bool verbose, string guidelineTitleStyle)
+        {
+
+            List<string> allDocs = FileManager.GetAllFilesAtPath(pathToChapterDocumentFolder, searchPattern: "Michaelis_Ch??.docx")
+                .OrderBy(x => x).ToList();
+
+            List<string> AllGuidelines = new List<string>();
+
+           
+
+            string h3 = "###";
+            string h1 = "#";
+
+            int chapterNumber = 0;
+            List<(string, string)> currentChapterGuidelines = new List<(string, string)>();
+
+            //before your loop
+            var csv = new System.Text.StringBuilder();
+
+
+            foreach (string chapterDocxPath in allDocs)
+            {
+                chapterNumber = GetChapterNumber(chapterDocxPath);
+                //instead of the following line using GetGuideLinesInDocument. a new method called GetUniqueGuideLinesInDocument(exiting guidelines stored in xml) 
+                //can be used to just find new guidelines (by determining if the guideline has a bookmark on it(note bookmarks only cover 255 characters)) and append them to the xml file 
+                currentChapterGuidelines.AddRange(GuideLineTools.GetGuideLinesInDocument(chapterDocxPath, chapterNumber, guidelineTitleStyle));
+
+                WriteXML(currentChapterGuidelines, pathToChapterDocumentFolder);
+
+            }
+
+            GuideLineTools._WordApp.Quit();
+
+        }
+
+        private static void WriteXML(List<(string, string)> currentChapterGuidelines, string pathToChapterDocumentFolder)
+        {
+
+            StreamWriter xmlFileWriter = File.CreateText(pathToChapterDocumentFolder + @"/Guidelines.csv");
+
+            xmlFileWriter.WriteLine("<?xml version=\"1.0\" encoding=\"utf - 8\"?>\n< root >\n");
+            // example format
+            // <guideline key="Ch01_fa67753" severity="DO" section="Naming" subsection="Variables and fields">DO favor clarity over brevity when naming identifiers.</guideline>
+            foreach ((string, string) bookmarkAndGuideline in currentChapterGuidelines)
+            {
+                xmlFileWriter.WriteLine($"\t<guideline key=\"{bookmarkAndGuideline.Item1} severity=\"\" section=\"\" subsection=\"\">\"{bookmarkAndGuideline.Item2}\"</guideline>");
+            }
+
+            xmlFileWriter.WriteLine("<\\root >");
+
+            xmlFileWriter.Close();
+        }
 
         public static int GetChapterNumber(string filePath)
         {

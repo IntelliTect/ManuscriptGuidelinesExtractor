@@ -36,7 +36,7 @@ namespace GuidelinesExtractor
 
             //object guideLineStyle = GetDocumentGuideLineStyle(); //chapters are inconsistent with styling and fonts
 
-            List<(string, string)> guidelinesAndBookmarks = new List<(string, string)>();
+            List<Guideline> guidelines = new List<Guideline>();
 
 
 
@@ -54,7 +54,7 @@ namespace GuidelinesExtractor
                 //will just be one Table which is the table that the Guideline is in. 
                 foreach (Word.Table guidelineTable in rng.Tables)
                 {
-                    GuidelineBookmarking(ref guidelinesAndBookmarks, chapterNumber, guidelineTable);
+                    GuidelineBookmarking(ref guidelines, chapterNumber, guidelineTable);
                     // GetGuidelineFromTable(ref guidelines, guidelineTable);
                 }
 
@@ -65,7 +65,7 @@ namespace GuidelinesExtractor
 
 
             _WordApp.Documents.Close(SaveChanges: Word.WdSaveOptions.wdPromptToSaveChanges);
-            return guidelinesAndBookmarks;
+            return guidelines;
 
         }
 
@@ -107,7 +107,7 @@ namespace GuidelinesExtractor
         }
 
 
-        public static void GuidelineBookmarking(ref List<(string, string)> guidelinesAndBookmarks, int chapterNumber, Word.Table table)
+        public static void GuidelineBookmarking(ref List<Guideline> guidelines, int chapterNumber, Word.Table table)
         {
             Word.Range individualGuidelineRange;
             for (int row = 1; row <= table.Rows.Count; row++)
@@ -119,7 +119,7 @@ namespace GuidelinesExtractor
 
                     individualGuidelineRange = cell.Range;
 
-                    BookmarkGuidelinesInTable(cell.Range, ref guidelinesAndBookmarks, chapterNumber);
+                    BookmarkGuidelinesInTable(cell.Range, ref guidelines, chapterNumber);
 
                 }
 
@@ -127,7 +127,7 @@ namespace GuidelinesExtractor
 
         }
 
-        private static void BookmarkGuidelinesInTable(Range tableRange, ref List<(string, string)> guidelinesAndBookmarks, int chapterNumber)
+        private static void BookmarkGuidelinesInTable(Range tableRange, ref List<Guideline> guidelines, int chapterNumber)
         {
 
 
@@ -141,7 +141,7 @@ namespace GuidelinesExtractor
             if (!string.IsNullOrEmpty(tableText))
             {
 
-                guidelineMatches = Regex.Matches(tableText, @"(([^\\](?<!\r))*(?=(\r)))"); //text followed by carriage return
+                guidelineMatches = Regex.Matches(tableText, @"(([^\\](?<!\r))*(?=(\r)))"); //text followed by carriage return -> get each individual guideline (i.e. each  DO..., DONT... etc) in the the table
             }
             else { return; }
 
@@ -150,7 +150,7 @@ namespace GuidelinesExtractor
 
             Word.Range individualGuidelineRange;
 
-            foreach (Match guidelineMatch in guidelineMatches)
+            foreach (Match guidelineMatch in guidelineMatches) 
             {
 
                 if (guidelineMatch.Value.StartsWith("Guideline") || string.IsNullOrWhiteSpace(guidelineMatch.Value)) continue;//skip the first line and whitespace matches
@@ -167,7 +167,10 @@ namespace GuidelinesExtractor
                 {
                     guidAsString = Guid.NewGuid().ToString("N");
                     string bookmark = (_ChapterWordDoc.Bookmarks.Add(($"Ch{chapterNumber.ToString().PadLeft(2,'0')}_{guidAsString}").Substring(0, 12), individualGuidelineRange).Name);
-                    guidelinesAndBookmarks.Add((bookmark, individualGuidelineRange.Text));
+                    //guidelines.Add((bookmark, individualGuidelineRange.Text));
+                    Guideline guideline = new Guideline() {Key=bookmark,Text=individualGuidelineRange.Text};
+                    guidelines.Add(guideline);
+
                 }
 
             }
