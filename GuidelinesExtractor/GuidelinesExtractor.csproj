@@ -53,7 +53,7 @@
     <Compile Include="FileManager.cs" />
     <Compile Include="Guideline.cs" />
     <Compile Include="GuidelinesFormatter.cs" />
-    <Compile Include="GuideLineTools.cs" />
+    <Compile Include="WordDocGuidelineTools.cs" />
     <Compile Include="Modes.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

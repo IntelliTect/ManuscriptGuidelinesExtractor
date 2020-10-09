@@ -2,18 +2,18 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("GuidelineExtractorTests")]
+[assembly: AssemblyTitle("GuidelinesExtractorTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GuidelineExtractorTests")]
+[assembly: AssemblyProduct("GuidelinesExtractorTests")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]
 
-[assembly: Guid("5ad35ab2-17dc-4538-9821-f134af955a0d")]
+[assembly: Guid("8646fe77-c3e4-414c-b97c-ba1bb70d77fa")]
 
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
