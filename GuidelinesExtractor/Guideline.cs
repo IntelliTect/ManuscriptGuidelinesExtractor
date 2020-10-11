@@ -15,6 +15,18 @@ namespace GuidelinesExtractor
 
         public List<string> Comments { get; set; } = new List<string>();
 
+        public override int GetHashCode()
+        {
+            return Key.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            Guideline otherGuideline = obj as Guideline;
+
+            return otherGuideline != null && string.Equals(otherGuideline.Key,this.Key);
+        }
+
     }
 
 }

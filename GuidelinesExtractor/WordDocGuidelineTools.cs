@@ -169,26 +169,31 @@ namespace GuidelinesExtractor
                 if (individualGuidelineRange.Find.Found)
                 {
                     guidAsString = Guid.NewGuid().ToString("N");
-                    string bookmark="NA";
+                    string bookmarkKey="NA";
 
                     switch (extractionMode) {
                         case ExtractionMode.BookmarkAllGuidelines:
-                            bookmark = (_ChapterWordDoc.Bookmarks.Add(($"Ch{chapterNumber.ToString().PadLeft(2, '0')}_{guidAsString}").Substring(0, 12), individualGuidelineRange).Name);
+                            bookmarkKey = (_ChapterWordDoc.Bookmarks.Add(($"Ch{chapterNumber.ToString().PadLeft(2, '0')}_{guidAsString}").Substring(0, 12), individualGuidelineRange).Name);
                             break;
                         case ExtractionMode.NoBookmarking:
-                            bookmark = "NA";
+                            bookmarkKey = "NA";
                             break;
                         case ExtractionMode.BookmarkOnlyNewGuidelinesAndCheckForChangesOfPreviouslyBookmarkedGuidelines:
                             //check if text is already bookmarked and if text has changed.
-                            if (!checkBookmarkStatus(individualGuidelineRange.Text, individualGuidelineRange))
+                            GuidelineStatus guidelineStatus = checkBookmarkStatus(individualGuidelineRange.Text, individualGuidelineRange, ref bookmarkKey);
+                            if (guidelineStatus == GuidelineStatus.NotPreviouslyBookmarkedNewGuideline)
                             {
-                                bookmark = (_ChapterWordDoc.Bookmarks.Add(($"Ch{chapterNumber.ToString().PadLeft(2, '0')}_{guidAsString}").Substring(0, 12), individualGuidelineRange).Name);
+                                bookmarkKey = (_ChapterWordDoc.Bookmarks.Add(($"Ch{chapterNumber.ToString().PadLeft(2, '0')}_{guidAsString}").Substring(0, 12), individualGuidelineRange).Name);
+                            }
+                            else if (guidelineStatus==GuidelineStatus.BookmarkedAndChanged) { 
+                                //do stuff with the changed guideline text 
                             }
                             break;
                     }
                    
                     //guidelines.Add((bookmark, individualGuidelineRange.Text));
-                    Guideline guideline = new Guideline() {Key=bookmark,Text=individualGuidelineRange.Text};
+                    Guideline guideline = new Guideline() {Key=bookmarkKey,Text=individualGuidelineRange.Text};
+                    bool added =GuidelinesFormatter.Guidelines.Add(guideline);
                     guidelines.Add(guideline);
 
                 }
@@ -196,14 +201,34 @@ namespace GuidelinesExtractor
 
         }
 
-        private static bool checkBookmarkStatus(string text, Range individualGuidelineRange)
+        /// <summary>
+        /// Determines the state of a guideline. If a bookmark already exists for it than the ref bookmarkKey is set to its id.
+        /// </summary>
+        private static GuidelineStatus checkBookmarkStatus(string text, Range individualGuidelineRange, ref string bookmarkKey)
         {
-            var bookmarks = individualGuidelineRange.Bookmarks;
-            var b =bookmarks.GetEnumerator();
-            var x = (Microsoft.Office.Interop.Word.Bookmark)b.Current;
-            var y = x.Name;
-            if (bookmarks.Count > 0) { return true; }
-            return false;
+            var bookmarksEnumerator = individualGuidelineRange.Bookmarks.GetEnumerator();
+            int guidelineStatus = 0;
+            if (!bookmarksEnumerator.MoveNext()) { return (GuidelineStatus)guidelineStatus; }
+            else {
+                guidelineStatus++;
+                var bookmark = (Microsoft.Office.Interop.Word.Bookmark)bookmarksEnumerator.Current;
+                bookmarkKey = bookmark.Name;
+                //find that bookmark key's guideline text from the previous set of guidelines. compare to current text.
+                //guidelineStatus++;
+
+                return (GuidelineStatus)guidelineStatus;
+                //return false;
+            }
+
+        }
+
+        private enum GuidelineStatus { 
+            
+            BookmarkedAndNoChange= 1,
+            BookmarkedAndChanged=2,
+            NotPreviouslyBookmarkedNewGuideline=3
+
+        
         }
 
         private static string PrepareFindText(string value) //check for special characters

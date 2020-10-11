@@ -12,9 +12,11 @@ namespace GuidelinesExtractorTests
         public void TestMethod1()
         {
             string folder = @"C:\Users\saffron\source\repos\EssentialCSharpManuscript\GuidelinesExtractor\WordDocs";
+            string pathToExistingGuidelines = @"C:\Users\saffron\source\repos\EssentialCSharpManuscript\GuidelinesExtractor\WordDocs\Guidelines10 - 10 - 20.xml";
 
-            GuidelinesFormatter.AllGuidelinesToXML(folder,false,"SF2_TTL", WordDocGuidelineTools.ExtractionMode.BookmarkOnlyNewGuidelinesAndCheckForChangesOfPreviouslyBookmarkedGuidelines);
-            //GuidelinesExtractor (folder, verbose: true, guidelineTitleStyle: "SF2_TTL");
+            GuidelinesFormatter guidelinesFormatter = new GuidelinesFormatter(folder, "SF2_TTL", WordDocGuidelineTools.ExtractionMode.BookmarkOnlyNewGuidelinesAndCheckForChangesOfPreviouslyBookmarkedGuidelines, pathToExistingGuidelines);
+            guidelinesFormatter.AllGuidelinesToXML();
+            
 
 
 
@@ -25,7 +27,7 @@ namespace GuidelinesExtractorTests
         [TestMethod]
         public void GetUniqueGuidelinesInTable()
         {
-            string doc = @"C:\Users\saffron\source\repos\GuidelinesExtractor\Michaelis_Ch12.docx";
+            //string doc = @"C:\Users\saffron\source\repos\GuidelinesExtractor\Michaelis_Ch12.docx";
 
             // GuidelinesExtractor.GuideLineTools.GetGuideLinesInDocument(doc , guidelineTitleStyle: "SF2_TTL");
 
