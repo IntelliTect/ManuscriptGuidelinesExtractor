@@ -53,6 +53,7 @@
     <Compile Include="FileManager.cs" />
     <Compile Include="Guideline.cs" />
     <Compile Include="GuidelinesFormatter.cs" />
+    <Compile Include="GuidelineTextCompare.cs" />
     <Compile Include="WordDocGuidelineTools.cs" />
     <Compile Include="Modes.cs" />
     <Compile Include="Program.cs" />

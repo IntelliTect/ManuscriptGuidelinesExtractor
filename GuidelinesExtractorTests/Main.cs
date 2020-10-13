@@ -11,10 +11,13 @@ namespace GuidelinesExtractorTests
         [TestMethod]
         public void TestMethod1()
         {
-            string folder = @"C:\Users\saffron\source\repos\EssentialCSharpManuscript\GuidelinesExtractor\WordDocs";
+            string folder = @"C:\Users\saffron\Downloads\FinalCopyCSharp8";
             string pathToExistingGuidelines = @"C:\Users\saffron\source\repos\EssentialCSharpManuscript\GuidelinesExtractor\WordDocs\Guidelines10 - 10 - 20.xml";
 
-            GuidelinesFormatter guidelinesFormatter = new GuidelinesFormatter(folder, "SF2_TTL", WordDocGuidelineTools.ExtractionMode.BookmarkOnlyNewGuidelinesAndCheckForChangesOfPreviouslyBookmarkedGuidelines, pathToExistingGuidelines);
+
+            GuidelinesFormatter guidelinesFormatter = new GuidelinesFormatter(folder, "SF2_TTL", WordDocGuidelineTools.ExtractionMode.BookmarkAllGuidelines);
+
+            //GuidelinesFormatter guidelinesFormatter = new GuidelinesFormatter(folder, "SF2_TTL", WordDocGuidelineTools.ExtractionMode.BookmarkOnlyNewGuidelinesAndCheckForChangesOfPreviouslyBookmarkedGuidelines, pathToExistingGuidelines);
             guidelinesFormatter.AllGuidelinesToXML();
             
 

@@ -10,8 +10,10 @@ namespace GuidelinesExtractorTests
         public void TestMethod1()
         {
             string folder = @"C:\Users\saffron\source\repos\GuidelinesExtractor\GuidelineExtractorTests\BookmarkFiles\EssentialCSharpManuscript";
+            string date = System.DateTime.Now.ToString("dd-MM-yy-H-mm-ss");
 
-           // GuidelinesExtractor.GuidelinesFormatter.AllGuidelinesToCSVWithBookmarks(folder, verbose: true, guidelineTitleStyle: "SF2_TTL");
+
+            // GuidelinesExtractor.GuidelinesFormatter.AllGuidelinesToCSVWithBookmarks(folder, verbose: true, guidelineTitleStyle: "SF2_TTL");
 
         }
 

@@ -17,7 +17,8 @@ namespace GuidelinesExtractor
         public const string _Comments = "comments";
 
 
-        public static HashSet<Guideline> Guidelines { get; private set; }
+
+        public static HashSet<Guideline> Guidelines { get; private set; } = new HashSet<Guideline>();
 
         public string PathToChapterDocumentFolder { get; }
         public string GuidelineTitleStyle { get; }
@@ -34,7 +35,7 @@ namespace GuidelinesExtractor
             {
                 throw new ArgumentNullException("pathToExistingGuidelinesXml not specified");
             }
-            else
+            else if (ExtractionMode != WordDocGuidelineTools.ExtractionMode.BookmarkAllGuidelines)
             {
                 Guidelines = ReadExisitingGuidelinesFile(pathToExistingGuidelinesXml);
                 PathToExistingGuidelinesXml = pathToExistingGuidelinesXml;
@@ -77,26 +78,24 @@ namespace GuidelinesExtractor
             List<Guideline> allChapterGuidelines = new List<Guideline>();
             foreach (string chapterDocxPath in allDocs)
             {
-                chapterNumber = GetChapterNumber(chapterDocxPath);
-                //instead of the following line using GetGuideLinesInDocument. a new method called GetUniqueGuideLinesInDocument(exiting guidelines stored in xml) 
-                //can be used to just find new guidelines (by determining if the guideline has a bookmark on it(note bookmarks only cover 255 characters)) and append them to the xml file 
+                chapterNumber = GetChapterNumber(chapterDocxPath);      
                 allChapterGuidelines.AddRange(WordDocGuidelineTools.GetGuideLinesInDocument(chapterDocxPath, chapterNumber, GuidelineTitleStyle, ExtractionMode));
 
             }
-            WriteXML(allChapterGuidelines, PathToChapterDocumentFolder);
+            WriteXML(PathToChapterDocumentFolder);
 
             WordDocGuidelineTools._WordApp.Quit();
 
         }
 
-        private void WriteXML(List<Guideline> currentChapterGuidelines, string pathToChapterDocumentFolder)
+        private void WriteXML( string pathToChapterDocumentFolder)
         {
             XDocument doc = new XDocument(new XElement("Guidelines"));
 
 
             // example format
             // <guideline key="Ch01_fa67753" severity="DO" section="Naming" subsection="Variables and fields">DO favor clarity over brevity when naming identifiers.</guideline>
-            foreach (Guideline guideline in currentChapterGuidelines)
+            foreach (Guideline guideline in Guidelines)
             {
                 var newGuideline = new XElement(_Guideline);
                 newGuideline.SetAttributeValue(_Key, guideline.Key);
@@ -107,8 +106,17 @@ namespace GuidelinesExtractor
                 //if (guideline.Comments.Count > 0) newGuideline.Add(guideline.Comments); add the comments as a child
                 doc.Root.Add(newGuideline);
             }
-            string date = System.DateTime.Today.ToString("dd - MM - yy");
-            doc.Save(pathToChapterDocumentFolder + @"\Guidelines" + date + ".xml");
+            string date = System.DateTime.Now.ToString("dd-MM-yy-H-mm-ss");
+            doc.Save(pathToChapterDocumentFolder + $@"\{date}_Guidelines.xml");
+            if (WordDocGuidelineTools._WarningLogHasWarnings)
+            {
+                WordDocGuidelineTools._ErrorLog.Save(pathToChapterDocumentFolder + $@"\{date}_WarningLog.xml");
+            }
+            else {
+                WordDocGuidelineTools._ErrorLog.Root.Add(new XElement("NoWarnings"));
+                WordDocGuidelineTools._ErrorLog.Save(pathToChapterDocumentFolder + $@"\{date}_WarningLog.xml");
+            }
+
 
         }
 
@@ -128,6 +136,12 @@ namespace GuidelinesExtractor
                 throw new Exception($"Cannot parse chapter number from {filePath}");
             }
         }
+
+
+      
+
+
+
 
     }
 }

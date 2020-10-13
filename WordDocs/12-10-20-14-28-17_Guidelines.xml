@@ -6,7 +6,7 @@
   <guideline key="Ch01_48bc750" severity="" section="" subsection="">DO capitalize both characters in two-character acronyms, except for the first word of a camelCased identifier.</guideline>
   <guideline key="Ch01_10c3978" severity="" section="Save this section" subsection="">DO capitalize only the first character in acronyms with three or more characters, except for the first word of a camelCased identifier.</guideline>
   <guideline key="Ch01_264fe16" severity="" section="" subsection="">DO NOT capitalize any of the characters in acronyms at the beginning of a camelCased identifier.</guideline>
-  <guideline key="Ch01_dd514d8" severity="this guy should be different" section="" subsection="">DO NOT use Hungarian notation (that is, do not encode the type of a variable in its name).</guideline>
+  <guideline key="Ch01_dd514d8" severity="this guy should be different" section="" subsection="">DO NOT use Gregorian notation (that is, do not encode the type of a variable in its name).</guideline>
   <guideline key="Ch01_01e69fa" severity="" section="" subsection="">DO name classes with nouns or noun phrases.</guideline>
   <guideline key="Ch01_e93f9d9" severity="" section="" subsection="">DO use PascalCasing for all class names.</guideline>
   <guideline key="Ch01_63ad1f3" severity="" section="" subsection="">DO use camelCasing for local variable names.</guideline>
