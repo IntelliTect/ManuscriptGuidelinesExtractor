@@ -186,6 +186,8 @@ namespace GuidelinesExtractor
 
                 if (guidelineMatch.Value.StartsWith("Guideline") || string.IsNullOrWhiteSpace(guidelineMatch.Value)) continue;//skip the first line and whitespace matches
 
+                string guidelineText = GetXmlCompatibleText(guidelineMatch.Value);
+
                 individualGuidelineRange = _ChapterWordDoc.Range(start, end);
                 string searchText = PrepareFindText(guidelineMatch.Value);
 
@@ -197,7 +199,7 @@ namespace GuidelinesExtractor
                 {
                     guidAsString = Guid.NewGuid().ToString("N");
                     string bookmarkKey = "NA";
-                    string guidelineText = GetXmlCompatibleText(guidelineMatch.Value);
+                    
 
                     Guideline guideline;
                     switch (extractionMode)
@@ -216,7 +218,7 @@ namespace GuidelinesExtractor
 
                         case ExtractionMode.BookmarkOnlyNewGuidelinesAndCheckForChangesOfPreviouslyBookmarkedGuidelines:
                             //check if text is already bookmarked and if text has changed.
-                            GuidelineStatus guidelineStatus = checkBookmarkStatus(individualGuidelineRange.Text, individualGuidelineRange, ref bookmarkKey);
+                            GuidelineStatus guidelineStatus = checkBookmarkStatus(guidelineText, individualGuidelineRange, ref bookmarkKey);
                             if (guidelineStatus == GuidelineStatus.NotPreviouslyBookmarkedNewGuideline)
                             {
                                 bookmarkKey = (_ChapterWordDoc.Bookmarks.Add(($"Ch{chapterNumber.ToString().PadLeft(2, '0')}_{guidAsString}").Substring(0, 12), individualGuidelineRange).Name);
@@ -263,7 +265,7 @@ namespace GuidelinesExtractor
         /// <summary>
         /// Determines the state of a guideline. If a bookmark already exists for it than the ref bookmarkKey is set to its id.
         /// </summary>
-        private static GuidelineStatus checkBookmarkStatus(string text, Range individualGuidelineRange, ref string bookmarkKey)
+        private static GuidelineStatus checkBookmarkStatus(string guideLineText, Range individualGuidelineRange, ref string bookmarkKey)
         {
             var bookmarksEnumerator = individualGuidelineRange.Bookmarks.GetEnumerator();
             int guidelineStatus = 0;
@@ -281,7 +283,7 @@ namespace GuidelinesExtractor
                 if (GuidelinesFormatter.Guidelines.TryGetValue(currentDocumentGuideline, out existingGuideLine))
                 { //check if text has changed.
 
-                    int distance = GuidelineTextCompare.Levenshtein(individualGuidelineRange.Text, existingGuideLine.Text);
+                    int distance = GuidelineTextCompare.Levenshtein(guideLineText, existingGuideLine.Text);
 
                     if (distance > 2)
                     {
