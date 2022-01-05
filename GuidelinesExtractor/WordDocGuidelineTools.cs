@@ -197,7 +197,7 @@ namespace GuidelinesExtractor
                 {
                     guidAsString = Guid.NewGuid().ToString("N");
                     string bookmarkKey = "NA";
-                    string guidelineText = GetXmlCompatibleText(individualGuidelineRange.Text);
+                    string guidelineText = GetXmlCompatibleText(guidelineMatch.Value);
 
                     Guideline guideline;
                     switch (extractionMode)
