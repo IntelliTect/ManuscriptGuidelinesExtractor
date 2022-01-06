@@ -6,10 +6,10 @@ namespace GuidelinesExtractorTests
     [TestClass]
     public class FormatTests
     {
-        [TestMethod]
+        [TestMethod][Ignore]
         public void TestMethod1()
         {
-            string folder = @"C:\Users\saffron\source\repos\GuidelinesExtractor\GuidelineExtractorTests\BookmarkFiles\EssentialCSharpManuscript";
+            string folder = @"C:\Users\PATH-TO\GuidelinesExtractor\GuidelineExtractorTests\BookmarkFiles\EssentialCSharpManuscript";
             string date = System.DateTime.Now.ToString("dd-MM-yy-H-mm-ss");
 
 
@@ -19,7 +19,7 @@ namespace GuidelinesExtractorTests
 
 
 
-        [TestMethod]
+        [TestMethod][Ignore]
         public void XMLOutputFileFormatAsExpected()
         {
 
@@ -32,9 +32,9 @@ namespace GuidelinesExtractorTests
 	<guideline key=""Ch01_024aa0c"" severity="""" section="""" subsection="""">DO NOT use any acronyms unless they are widely accepted, and even then use them consistently.</guideline>
 </root>";
 
-            string doc = @"C:\Users\saffron\source\repos\GuidelinesExtractor\Michaelis_Ch12.docx";
+            string doc = @"PATH-TO/TestDoc.docx";
 
-            // GuidelinesExtractor.GuideLineTools.GetGuideLinesInDocument(doc , guidelineTitleStyle: "SF2_TTL");
+            //GuidelinesExtractor.GuideLineTools.GetGuideLinesInDocument(doc, guidelineTitleStyle: "SF2_TTL");
 
         }
     }

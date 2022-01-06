@@ -199,7 +199,6 @@ namespace GuidelinesExtractor
                 {
                     guidAsString = Guid.NewGuid().ToString("N");
                     string bookmarkKey = "NA";
-                    
 
                     Guideline guideline;
                     switch (extractionMode)
